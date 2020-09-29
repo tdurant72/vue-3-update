@@ -6,38 +6,64 @@
         <input type="text" id="goaltext" v-model="enteredText" />
       </div>
       <p v-if="invalidInput">Please enter a valid goal text (non-empty).</p>
-      <button>Add Goal</button>
+      <button >Add Goal</button>
     </form>
   </section>
 </template>
 
 <script>
+import {ref, watch} from 'vue';
 export default {
   emits: ["add-goal"],
-  data() {
-    return {
-      enteredText: "",
-      invalidInput: false,
-    };
-  },
-  methods: {
-    addGoal() {
-      this.invalidInput = false;
-      if (this.enteredText === "") {
-        this.invalidInput = true;
+  setup(_, context){
+    const enteredText = ref('');
+    const invalidInput = ref(false);
+
+    watch(invalidInput,function(val){
+      if(val){
+        console.log("Invalid Input")
+      }
+    });
+
+    function addGoal() {
+      invalidInput.value = false;
+      if (enteredText.value === "") {
+        invalidInput.value = true;
         return;
       }
-      this.$emit("add-goal", this.enteredText);
-      this.enteredText = '';
-    },
-  },
-  watch: {
-    invalidInput(val) {
-      if (val) {
-        console.log("Analytics: Invalid Input");
-      }
-    },
-  },
+      context.emit("add-goal", enteredText.value);
+      enteredText.value = '';
+    }
+    return{
+      enteredText,
+      invalidInput,
+      addGoal
+    }
+  }
+  // data() {
+  //   return {
+  //     enteredText: "",
+  //     invalidInput: false,
+  //   };
+  // },
+  // methods: {
+  //   addGoal() {
+  //     this.invalidInput = false;
+  //     if (this.enteredText === "") {
+  //       this.invalidInput = true;
+  //       return;
+  //     }
+  //     this.$emit("add-goal", this.enteredText);
+  //     this.enteredText = '';
+  //   },
+  // },
+  // watch: {
+  //   invalidInput(val) {
+  //     if (val) {
+  //       console.log("Analytics: Invalid Input");
+  //     }
+  //   },
+  // },
 };
 </script>
 
